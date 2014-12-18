@@ -1,0 +1,159 @@
+#include <Console.h>
+
+int pinA = A5;  // Numero del pin al que el sistema LED A esta conectado
+int pinB = A4;  // Numero del pin al que el sistema LED B esta conectado
+int pinC = A3;  // Numero del pin al que el sistema LED C esta conectado
+//int pinD = 11;  // Numero del pin al que el sistema LED D esta conectado(opcional)
+//int pinE = A0;   -----Para Input en caso de ser necesario
+int pin = pinA;
+int blinkSpeed = 10; // velocidad de blink para la funcion (en milisegundos)
+int brightness = 0;    // Que tan brillante esta el LED
+int fadeAmount = 5;    // En cuantos puntos hacer el fade (multiplos) 
+char incomingByte;     // una variable que representa la informacion ingresada en la consola
+
+
+void setup() {
+  Bridge.begin();   // Inicializar Bridge
+  Console.begin();  // Initializar Console
+
+  // esperar que se conecte el puerto de consola (Console port) 
+  while (!Console);
+
+  Console.println("Comandos de Control:"
+  "Sistema LED A"
+  "---------------------------"
+  "1 = Apagado"
+  "2 = Encendido"
+  "3 = Titilar una vez lento"
+  "4 = Titilar una vez rapido"
+  "    "
+  "Sistema LED B"
+  "---------------------------"
+  "6 = Apagado"
+  "7 = Encendido"
+  "8 = Titilar una vez lento"
+  "9 = Titilar una vez rapido"
+  "   "
+  "Sistema LED C"
+  "---------------------------"
+  "q = Apagado"
+  "w = Encendido"
+  "e = Titilar una vez rapido"
+  "r = Titilar una vez lento" );
+
+  // inicializar los pines como salidas (output):
+  pinMode(pinA, OUTPUT);
+  pinMode(pinB, OUTPUT);  
+  pinMode(pinC, OUTPUT);
+ // pinMode(pinD, OUTPUT);  //pinD opcional
+ 
+ // pinMode(pinE, INPUT);  //inicializar el pin como entrada
+
+ 
+}
+
+
+void loop() {
+  
+ //Esto de aqui es para que despues tenga boton de apagado y encendido
+  /* if (pinE, HIGH) {
+    digitalWrite(pinA
+     }
+*/
+
+
+
+
+  // ver si hay informacion entrante desde la Consola:
+ if (Console.available() > 0) {
+   
+    incomingByte = Console.read();   // Leer el ultimo byte en el buffer de la consola:
+    Console.println(incomingByte);   // Imprimir en la consola la variable incomingByte
+    
+    
+    //---------------------------------------Primer sistema de LEDs (teclas 1 al 5)
+    // Si es un 1, apaga el sistema LED A:
+    if (incomingByte == '1') {
+      analogWrite(pinA, 0);
+    }
+    // Si es un 2, enciende el sistema LED A:
+    else if (incomingByte == '2') {
+      analogWrite(pinA, 255);
+    }  
+    // si es un 3, titilar el sistema LED A a la velocidad definida en blinkspeed:
+    else if (incomingByte == '3') {
+      
+  // ejecutar la funcion blinkin a 10 milisegundos entre blink
+      blinkin(blinkSpeed = 10, pin = pinA);  
+    }
+    
+    // si es un 4, titilar el sistema LED A a la velocidad definida en blinkSpeed:
+    else if (incomingByte == '4') {  
+     // ejecutar la funcion blinkin a 2 milisegundos entre blink:
+       blinkin(blinkSpeed = 2, pin = pinA);
+    }   
+    //---------------------------------------- Sistema de LEDs B (teclas 6 al 0)
+     // Si es un 6, apaga el sistema LED B:
+    if (incomingByte == '6') {
+      analogWrite(pinB, 0);
+    }
+    //  // Si es un 7, enciende el sistema LED B:
+    else if (incomingByte == '7') {
+      analogWrite(pinB, 255);
+    }  
+     // si es un 8, titilar el sistema LED B a la velocidad definida en blinkspeed:
+    else if (incomingByte == '8') {
+      
+     // ejecutar la funcion blinkin a 10 milisegundos entre blink
+      blinkin(blinkSpeed = 10, pin = pinB);  
+    }
+    
+     // si es un 9, titilar el sistema LED B a la velocidad definida en blinkspeed:
+    else if (incomingByte == '9') {  
+    // ejecutar la funcion blinkin a 2 milisegundos entre blink
+       blinkin(blinkSpeed = 2, pin = pinB);
+    }
+    
+    //---------------------------------------- Sistema de LEDs C (teclas q a la t)    
+     // Si es una q, apaga el sistema LED C:
+    if (incomingByte == 'q') {
+      analogWrite(pinC, 0);
+    }
+    // Si es una w, enciende el sistema LED C:
+    else if (incomingByte == 'w') {
+      analogWrite(pinC, 255);
+    }  
+    // si es una e, titilar el sistema LED C a la velocidad definida en blinkspeed:
+    else if (incomingByte == 'e') {
+      
+  // ejecutar la funcion blinkin a 10 milisegundos entre blink
+      blinkin(blinkSpeed = 10, pin = pinC);  
+    }
+    
+    // si es una r, titilar el sistema LED C a la velocidad definida en blinkSpeed:
+    else if (incomingByte == 'r') {  
+     // ejecutar la funcion blinkin a 2 milisegundos entre blink:
+       blinkin(blinkSpeed = 2, pin = pinC);
+    }   
+  }
+}
+
+//funcion blinkin:
+int blinkin(int blinkSpeed, int pin) {
+  
+  for (int fadeValue = 0 ; fadeValue <= 255; fadeValue += 5) {
+      // sets the value (range from 0 to 255):
+    analogWrite(pin, fadeValue);
+    // wait for x milliseconds to see the dimming effect
+    delay(blinkSpeed);  
+  }
+
+  // fade out from max to min in increments of 5 points:
+  for (int fadeValue = 255 ; fadeValue >= 0; fadeValue -= 5) {
+      // sets the value (range from 0 to 255):
+    analogWrite(pin, fadeValue);
+      // wait for x milliseconds to see the dimming effect
+    delay(blinkSpeed);
+  }
+}
+
